@@ -1,0 +1,44 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: account-service
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+  profiles:
+    active: default
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true # eureka
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    com.gg.accountservice: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - info
+          - refresh
+          - health
+          - beans
+          - httptrace
+          - busrefresh
