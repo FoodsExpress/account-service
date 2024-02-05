@@ -1,5 +1,7 @@
 package com.foodexpress.accountservice.adapter.out.jwt;
 
+import com.foodexpress.accountservice.application.port.in.GetAccountCommand;
+import com.foodexpress.accountservice.application.port.in.GetAccountUseCase;
 import com.foodexpress.accountservice.domain.Account;
 import com.foodexpress.accountservice.domain.AccountRole;
 import jakarta.ws.rs.NotFoundException;
@@ -21,15 +23,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
+    private final GetAccountUseCase getAccountUseCase;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken)authentication;
-        return processUserAuthentication(String.valueOf(authenticationToken.getPrincipal()), authenticationToken.getCredentials());
+        return processUserAuthentication((JwtAuthentication)authenticationToken.getPrincipal(), authenticationToken.getCredentials());
     }
 
-    private Authentication processUserAuthentication(String principal, CredentialInfo credential) {
+    private Authentication processUserAuthentication(JwtAuthentication principal, CredentialInfo credential) {
         try {
-            Account account = getAccountDto(principal, credential);
+            Account account = getAccountDto(principal.accountId(), credential);
             CredentialInfo credentialInfo = new CredentialInfo(account.password(), account.loginType());
             JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(
                 new JwtAuthentication(account.accountId().getId(), account.email(), account.nickname()),
@@ -51,8 +55,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         return authentication.isAssignableFrom(JwtAuthenticationToken.class);
     }
 
-    public Account getAccountDto(String principal, CredentialInfo credential) {
-        return null;
+    public Account getAccountDto(String accountId, CredentialInfo credential) {
+        return getAccountUseCase.getAccount(GetAccountCommand.of(accountId, credential.getCredential()));
     }
 
     public Collection<? extends GrantedAuthority> authorities(Set<AccountRole> role) {
