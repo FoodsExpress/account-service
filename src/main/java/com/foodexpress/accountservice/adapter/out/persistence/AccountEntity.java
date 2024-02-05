@@ -2,9 +2,14 @@ package com.foodexpress.accountservice.adapter.out.persistence;
 
 import com.foodexpress.accountservice.domain.*;
 import jakarta.persistence.*;
+import jakarta.ws.rs.BadRequestException;
 import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Set;
 import java.util.UUID;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
 @Entity
@@ -45,6 +50,12 @@ public class AccountEntity extends UpdatedEntity {
     @Enumerated(EnumType.STRING)
     private AccountKind accountKind;
 
+    /* 권한 */
+    @ElementCollection(fetch = LAZY)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "account_roles", joinColumns = @JoinColumn(name = "id"))
+    private Set<AccountRole> roles = Set.of(AccountRole.USER);
+
     /**
      * 로그인 유형
      */
@@ -84,6 +95,39 @@ public class AccountEntity extends UpdatedEntity {
             .loginCount(this.loginCount)
             .loginFailCount(this.loginFailCount)
             .build();
+    }
+
+    /* 로그인 후 세팅 */
+    public void afterLoginSuccess(String fcmToken) {
+        this.loginFailCount = 0;
+        this.loginCount++;
+    }
+
+    /**
+     * 비밀번호 변경
+     */
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * 이름 변경
+     */
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void login(PasswordEncoder passwordEncoder, String credential) {
+        if (!passwordEncoder.matches(credential, this.password)) {
+            this.loginFailCount++;
+            throw new BadRequestException("");
+        } else if (this.accountStatus != AccountStatus.NORMAL) {
+            throw new BadRequestException("");
+        }
+    }
+
+    public void successAuthUser() {
+        this.accountStatus = AccountStatus.NORMAL;
     }
 
 }
