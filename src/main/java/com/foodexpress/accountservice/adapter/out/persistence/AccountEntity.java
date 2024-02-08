@@ -1,8 +1,8 @@
 package com.foodexpress.accountservice.adapter.out.persistence;
 
+import com.foodexpress.accountservice.common.advice.exceptions.NotValidAccountException;
 import com.foodexpress.accountservice.domain.*;
 import jakarta.persistence.*;
-import jakarta.ws.rs.BadRequestException;
 import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -20,7 +20,7 @@ public class AccountEntity extends UpdatedEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private UUID accountId;
 
     /**
@@ -31,6 +31,7 @@ public class AccountEntity extends UpdatedEntity {
     /**
      * 이메일
      */
+    @Column(unique = true, nullable = false)
     private String email;
 
     /**
@@ -66,26 +67,28 @@ public class AccountEntity extends UpdatedEntity {
      * 로그인 횟수
      */
     private int loginCount;
-
+    
     /**
      * 로그인 실패 횟수
      */
     private int loginFailCount;
 
-    public static AccountEntity createNewAccount(Account account) {
+    public static AccountEntity createNewAccount(Account account, PasswordEncoder passwordEncoder) {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.accountId = UUID.randomUUID();
         accountEntity.email = account.email();
         accountEntity.nickname = account.nickname();
-        accountEntity.password = account.password();
+        accountEntity.password = passwordEncoder.encode(account.password());
         accountEntity.accountStatus = AccountStatus.PENDING;
         accountEntity.accountKind = account.accountKind();
+        accountEntity.roles = account.roles();
         accountEntity.loginType = account.loginType();
         return accountEntity;
     }
 
     public Account mapToDomain() {
         return Account.builder()
+            .id(this.id)
             .accountId(AccountId.of(this.accountId.toString()))
             .email(this.email)
             .nickname(this.nickname)
@@ -94,11 +97,14 @@ public class AccountEntity extends UpdatedEntity {
             .loginType(this.loginType)
             .loginCount(this.loginCount)
             .loginFailCount(this.loginFailCount)
+            .roles(this.roles)
             .build();
     }
 
-    /* 로그인 후 세팅 */
-    public void afterLoginSuccess(String fcmToken) {
+    /**
+     * 로그인 후 세팅
+     */
+    public void afterLoginSuccess() {
         this.loginFailCount = 0;
         this.loginCount++;
     }
@@ -120,14 +126,17 @@ public class AccountEntity extends UpdatedEntity {
     public void login(PasswordEncoder passwordEncoder, String credential) {
         if (!passwordEncoder.matches(credential, this.password)) {
             this.loginFailCount++;
-            throw new BadRequestException("");
-        } else if (this.accountStatus != AccountStatus.NORMAL) {
-            throw new BadRequestException("");
+            throw new NotValidAccountException("계정이 존재하지 않거나 비밀번호가 일치하지 않습니다.");
         }
+        this.afterLoginSuccess();
     }
 
     public void successAuthUser() {
         this.accountStatus = AccountStatus.NORMAL;
+    }
+
+    public void loginFail() {
+        this.loginFailCount++;
     }
 
 }

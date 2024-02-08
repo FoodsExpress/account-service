@@ -52,7 +52,9 @@ public class SecurityConfig {
                 config -> config.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)).sessionManagement(session -> session.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS)).authorizeHttpRequests(request -> request.requestMatchers("/swagger-ui/**",
                                                                                                            "/v3/api-docs/**",
-                                                                                                           "/swagger-resources/**").permitAll()
+                                                                                                           "/swagger-resources/**",
+                                                                                                           "/account/auth/**",
+                                                                                                           "/actuator/**").permitAll()
                 .anyRequest().authenticated()).addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

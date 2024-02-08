@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/account")
+@RequestMapping("/account/auth")
 public class RegisterAccountController {
 
     private final RegisterAccountUseCase registerAccountUseCase;
