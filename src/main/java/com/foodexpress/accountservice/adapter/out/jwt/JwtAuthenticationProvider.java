@@ -20,6 +20,12 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * 로그인 시 인증 객체를 Authentication 에 담아주는 클래스
+ *
+ * @author seunggu.lee
+ * @see AuthenticationProvider#authenticate(Authentication)
+ */
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
@@ -55,11 +61,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         return authentication.isAssignableFrom(JwtAuthenticationToken.class);
     }
 
-    public Account getAccountDto(String accountId, CredentialInfo credential) {
+    private Account getAccountDto(String accountId, CredentialInfo credential) {
         return getAccountUseCase.getAccount(GetAccountCommand.of(accountId, credential.getCredential()));
     }
 
-    public Collection<? extends GrantedAuthority> authorities(Set<AccountRole> role) {
+    private Collection<? extends GrantedAuthority> authorities(Set<AccountRole> role) {
         return role.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.name())).collect(Collectors.toSet());
     }
 

@@ -1,6 +1,7 @@
 package com.foodexpress.accountservice.application.port.in;
 
 import com.foodexpress.accountservice.common.SelfValidating;
+import com.foodexpress.accountservice.common.advice.exceptions.NotMatchedPasswordException;
 import com.foodexpress.accountservice.domain.Account;
 import com.foodexpress.accountservice.domain.LoginType;
 import jakarta.validation.constraints.Email;
@@ -23,7 +24,7 @@ public class RegisterAccountCommand extends SelfValidating<RegisterAccountComman
     public Account toDomain() {
         this.validateSelf();
         if (!password.equals(confirmPassword)) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new NotMatchedPasswordException("비밀번호가 일치하지 않습니다.");
         }
         return Account.builder().nickname(this.nickname)
             .password(this.password)

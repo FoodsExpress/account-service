@@ -3,6 +3,8 @@ package com.foodexpress.accountservice.adapter.out.persistence;
 import com.foodexpress.accountservice.application.port.out.GetAccountPort;
 import com.foodexpress.accountservice.application.port.out.RegisterAccountPort;
 import com.foodexpress.accountservice.common.PersistenceAdapter;
+import com.foodexpress.accountservice.common.advice.exceptions.AlreadyPresentAccountException;
+import com.foodexpress.accountservice.common.advice.exceptions.NotValidAccountException;
 import com.foodexpress.accountservice.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +32,9 @@ public class AccountPersistenceAdapter implements RegisterAccountPort, GetAccoun
      */
     @Override
     public Account registerAccount(Account account) {
+        accountRepository.findByEmail(account.email()).ifPresent(c -> {
+            throw new AlreadyPresentAccountException("이미 존재하는 계정입니다.");
+        });
         AccountEntity accountEntity = AccountEntity.createNewAccount(account, passwordEncoder);
         accountRepository.save(accountEntity);
         return accountEntity.mapToDomain();
@@ -45,7 +50,7 @@ public class AccountPersistenceAdapter implements RegisterAccountPort, GetAccoun
     @Override
     @Transactional
     public Account getAccountByEmailAndPassword(String email, String password) {
-        AccountEntity accountEntity = accountRepository.findByEmail(email).orElseThrow();
+        AccountEntity accountEntity = accountRepository.findByEmail(email).orElseThrow(NotValidAccountException::new);
         accountEntity.login(passwordEncoder, password);
         return accountEntity.mapToDomain();
     }

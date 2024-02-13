@@ -67,7 +67,7 @@ public class AccountEntity extends UpdatedEntity {
      * 로그인 횟수
      */
     private int loginCount;
-    
+
     /**
      * 로그인 실패 횟수
      */
@@ -79,7 +79,7 @@ public class AccountEntity extends UpdatedEntity {
         accountEntity.email = account.email();
         accountEntity.nickname = account.nickname();
         accountEntity.password = passwordEncoder.encode(account.password());
-        accountEntity.accountStatus = AccountStatus.PENDING;
+        accountEntity.accountStatus = AccountStatus.NORMAL;
         accountEntity.accountKind = account.accountKind();
         accountEntity.roles = account.roles();
         accountEntity.loginType = account.loginType();

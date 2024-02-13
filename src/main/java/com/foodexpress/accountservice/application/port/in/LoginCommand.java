@@ -1,12 +1,13 @@
 package com.foodexpress.accountservice.application.port.in;
 
+import com.foodexpress.accountservice.common.SelfValidating;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoginCommand {
+public class LoginCommand extends SelfValidating<LoginCommand> {
 
     private String email;
     private String password;
@@ -15,6 +16,7 @@ public class LoginCommand {
         LoginCommand loginCommand = new LoginCommand();
         loginCommand.email = email;
         loginCommand.password = password;
+        loginCommand.validateSelf();
         return loginCommand;
     }
 
