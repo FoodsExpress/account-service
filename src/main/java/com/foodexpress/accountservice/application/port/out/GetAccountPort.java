@@ -4,6 +4,6 @@ import com.foodexpress.accountservice.domain.Account;
 
 public interface GetAccountPort {
 
-    Account getAccountByAccountIdAndPassword(String accountId, String password);
+    Account getAccountByEmailAndPassword(String email, String password);
 
 }

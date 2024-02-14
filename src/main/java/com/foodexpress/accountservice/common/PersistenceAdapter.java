@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
+/**
+ * 데이터베이스 계층에서 사용되는 Adapter 어노테이션
+ *
+ * @author seunggu.lee
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

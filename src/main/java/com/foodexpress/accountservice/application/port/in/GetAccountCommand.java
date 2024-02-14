@@ -4,7 +4,7 @@ import com.foodexpress.accountservice.common.SelfValidating;
 import lombok.Getter;
 
 @Getter
-public class GetAccountCommand extends SelfValidating<RegisterAccountCommand> {
+public class GetAccountCommand extends SelfValidating<GetAccountCommand> {
 
     private String accountId;
 
@@ -14,6 +14,7 @@ public class GetAccountCommand extends SelfValidating<RegisterAccountCommand> {
         GetAccountCommand getAccountCommand = new GetAccountCommand();
         getAccountCommand.accountId = accountId;
         getAccountCommand.password = password;
+        getAccountCommand.validateSelf();
         return getAccountCommand;
     }
 
