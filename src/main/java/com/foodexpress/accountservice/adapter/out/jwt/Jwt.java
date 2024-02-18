@@ -36,6 +36,7 @@ public class Jwt {
         builder.withClaim(JwtInfo.ACCOUNT_ID.name(), claims.accountId);
         builder.withClaim(JwtInfo.ID.name(), claims.id);
         builder.withClaim(JwtInfo.EMAIL.name(), claims.email);
+        builder.withClaim(JwtInfo.NICKNAME.name(), claims.nickname);
         builder.withArrayClaim(JwtInfo.ROLES.name(), claims.roles);
         return builder.sign(algorithm);
     }
@@ -86,6 +87,12 @@ public class Jwt {
             if (!emailClaim.isNull()) {
                 this.email = emailClaim.asString();
             }
+
+            Claim nicknameClaim = decodedJWT.getClaim(JwtInfo.NICKNAME.name());
+            if (!nicknameClaim.isNull()) {
+                this.nickname = nicknameClaim.asString();
+            }
+
             Claim rolesClaim = decodedJWT.getClaim(JwtInfo.ROLES.name());
             if (!rolesClaim.isNull()) {
                 this.roles = rolesClaim.asArray(String.class);

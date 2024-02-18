@@ -14,7 +14,7 @@ spring:
     active: default
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -29,16 +29,4 @@ eureka:
 
 logging:
   level:
-    com.gg.accountservice: DEBUG
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include:
-          - info
-          - refresh
-          - health
-          - beans
-          - httptrace
-          - busrefresh
+    com.foodexpress.accountservice: DEBUG

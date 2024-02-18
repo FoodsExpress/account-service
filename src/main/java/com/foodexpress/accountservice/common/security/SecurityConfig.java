@@ -1,6 +1,6 @@
-package com.foodexpress.accountservice.adapter.out.jwt;
+package com.foodexpress.accountservice.common.security;
 
-import com.foodexpress.accountservice.application.port.in.GetAccountUseCase;
+import com.foodexpress.accountservice.adapter.out.jwt.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -31,16 +31,9 @@ public class SecurityConfig {
 
     private final EntryPointHandler unAuthorizedHandler;
 
-    private final GetAccountUseCase getAccountUseCase;
-
     @Bean
     public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
         return new JwtAuthenticationTokenFilter(jwtProperties.getHeader(), jwt);
-    }
-
-    @Bean
-    public JwtAuthenticationProvider jwtAuthenticationProvider() {
-        return new JwtAuthenticationProvider(getAccountUseCase);
     }
 
     @Bean
