@@ -18,6 +18,11 @@ spring:
     properties:
       hibernate:
         show_sql: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/account?rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    password: foodexpress
+    username: foodexpress
+    driver-class-name: com.mysql.cj.jdbc.Driver
 eureka:
   instance:
     instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
