@@ -60,4 +60,9 @@ public class AccountPersistenceAdapter implements RegisterAccountPort, GetAccoun
         return accountRepository.findById(accountId).orElseThrow(NotValidAccountException::new).mapToDomain();
     }
 
+    @Override
+    public Account getAccountById(Long id) {
+        return accountRepository.findById(id).orElseThrow(NotValidAccountException::new).mapToDomain();
+    }
+
 }
