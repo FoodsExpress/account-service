@@ -6,4 +6,6 @@ public interface GetAccountPort {
 
     Account getAccountByEmailAndPassword(String email, String password);
 
+    Account getAccountByIdAndPassword(Long accountId, String password);
+
 }

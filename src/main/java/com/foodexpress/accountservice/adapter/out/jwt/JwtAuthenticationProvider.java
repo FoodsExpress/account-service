@@ -15,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @author seunggu.lee
  * @see AuthenticationProvider#authenticate(Authentication)
  */
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
@@ -39,10 +41,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private Authentication processUserAuthentication(JwtAuthentication principal, CredentialInfo credential) {
         try {
-            Account account = getAccountDto(principal.accountId(), credential);
+            Account account = getAccountDto(principal.id(), credential);
             CredentialInfo credentialInfo = new CredentialInfo(account.password(), account.loginType());
             JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(
-                new JwtAuthentication(account.accountId().getId(), account.email(), account.nickname()),
+                new JwtAuthentication(account.id(), account.accountId().getId(), account.email(), account.nickname()),
                 credentialInfo,
                 this.authorities(account.roles()));
             authenticationToken.setDetails(account);
@@ -61,7 +63,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         return authentication.isAssignableFrom(JwtAuthenticationToken.class);
     }
 
-    private Account getAccountDto(String accountId, CredentialInfo credential) {
+    private Account getAccountDto(Long accountId, CredentialInfo credential) {
         return getAccountUseCase.getAccount(GetAccountCommand.of(accountId, credential.getCredential()));
     }
 

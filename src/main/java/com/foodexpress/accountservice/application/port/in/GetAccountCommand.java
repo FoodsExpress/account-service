@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 public class GetAccountCommand extends SelfValidating<GetAccountCommand> {
 
-    private String accountId;
+    private Long accountId;
 
     private String password;
 
-    public static GetAccountCommand of(String accountId, String password) {
+    public static GetAccountCommand of(Long accountId, String password) {
         GetAccountCommand getAccountCommand = new GetAccountCommand();
         getAccountCommand.accountId = accountId;
         getAccountCommand.password = password;
