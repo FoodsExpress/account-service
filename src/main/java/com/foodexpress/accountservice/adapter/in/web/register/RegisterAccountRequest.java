@@ -1,6 +1,7 @@
 package com.foodexpress.accountservice.adapter.in.web.register;
 
 import com.foodexpress.accountservice.application.port.in.RegisterAccountCommand;
+import com.foodexpress.accountservice.domain.LoginType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class RegisterAccountRequest {
     public RegisterAccountCommand convertCommand() {
         RegisterAccountCommand registerAccountCommand = new RegisterAccountCommand();
         copyProperties(this, registerAccountCommand);
+        registerAccountCommand.setLoginType(LoginType.NORMAL);
         return registerAccountCommand;
     }
 
