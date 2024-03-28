@@ -8,4 +8,6 @@ public interface GetAccountPort {
 
     Account getAccountByIdAndPassword(Long accountId, String password);
 
+    Account getAccountById(Long id);
+
 }
