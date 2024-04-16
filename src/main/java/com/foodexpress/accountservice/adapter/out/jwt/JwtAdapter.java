@@ -31,7 +31,7 @@ public class JwtAdapter implements AuthenticationJwtPort, TokenRefreshPort {
      */
     @Override
     public JwtToken refreshAccessToken(String refreshToken) {
-        if (jwt.validateToken(refreshToken)) {
+        if (!jwt.validateToken(refreshToken)) {
             throw new NotValidJwtTokenException();
         }
         Jwt.Claims claims = jwt.verify(refreshToken);
